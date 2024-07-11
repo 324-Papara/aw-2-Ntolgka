@@ -36,6 +36,7 @@ public class Startup
         services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
         services.AddValidatorsFromAssemblyContaining<CustomerAddressValidator>();
         services.AddValidatorsFromAssemblyContaining<CustomerDetailValidator>();
+        services.AddValidatorsFromAssemblyContaining<CustomerPhoneValidator>();
         services.AddValidatorsFromAssemblyContaining<BaseEntityValidator>();
         
         services.AddSwaggerGen(c =>
