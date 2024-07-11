@@ -10,9 +10,9 @@ namespace Para.Api.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly ParaSqlDbContext dbContext;
+        private readonly ParaPostgreDbContext dbContext;
 
-        public CustomersController(ParaSqlDbContext dbContext)
+        public CustomersController(ParaPostgreDbContext dbContext)
         {
             this.dbContext = dbContext;
         }

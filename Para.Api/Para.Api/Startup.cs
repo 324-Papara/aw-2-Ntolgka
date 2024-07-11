@@ -3,6 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Para.Data.Context;
 using Para.Data.UnitOfWork;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Para.Api.Validators;
+using Para.Data.Validators;
+using Para.Base.Validators;
 
 namespace Para.Api;
 
@@ -25,6 +30,12 @@ public class Startup
             options.JsonSerializerOptions.WriteIndented = true;
             options.JsonSerializerOptions.PropertyNamingPolicy = null;
         });
+        services.AddFluentValidationAutoValidation();
+        services.AddFluentValidationClientsideAdapters();
+        services.AddValidatorsFromAssemblyContaining<BookValidator>();
+        services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
+        services.AddValidatorsFromAssemblyContaining<BaseEntityValidator>();
+        
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Para.Api", Version = "v1" });
@@ -33,7 +44,7 @@ public class Startup
         var connectionStringSql = Configuration.GetConnectionString("MsSqlConnection");
         services.AddDbContext<ParaSqlDbContext>(options => options.UseSqlServer(connectionStringSql));
         
-        var connectionStringPostgre = Configuration.GetConnectionString("PostgresSqlConnection");
+        var connectionStringPostgre = Configuration.GetConnectionString("PostgreSqlConnection");
         services.AddDbContext<ParaPostgreDbContext>(options => options.UseNpgsql(connectionStringPostgre));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
