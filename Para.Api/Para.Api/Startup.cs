@@ -35,6 +35,7 @@ public class Startup
         services.AddValidatorsFromAssemblyContaining<BookValidator>();
         services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
         services.AddValidatorsFromAssemblyContaining<CustomerAddressValidator>();
+        services.AddValidatorsFromAssemblyContaining<CustomerDetailValidator>();
         services.AddValidatorsFromAssemblyContaining<BaseEntityValidator>();
         
         services.AddSwaggerGen(c =>
