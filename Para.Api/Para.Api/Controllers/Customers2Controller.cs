@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Para.Api.Dto;
 using Para.Data.Domain;
 using Para.Data.UnitOfWork;
 
@@ -33,6 +34,42 @@ namespace Para.Api.Controllers
             }
             return Ok(entity);
         }
+        
+        [HttpGet("{customerId}/details")]
+        public async Task<ActionResult<CustomerDto>> GetDetailed(long customerId)
+        {
+            var entity = await unitOfWork.CustomerRepository.GetDetails(customerId);
+            if (entity == null)
+            {
+                return NotFound("There is no customer with the given Id.");
+            }
+
+            var customerDto = new CustomerDto
+            {
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                IdentityNumber = entity.IdentityNumber,
+                Email = entity.Email,
+                CustomerNumber = entity.CustomerNumber,
+                DateOfBirth = entity.DateOfBirth,
+                CustomerAddresses = entity.CustomerAddresses?.Select(addr => new CustomerAddressDto
+                {
+                    Country = addr.Country,
+                    City = addr.City,
+                    AddressLine = addr.AddressLine,
+                    ZipCode = addr.ZipCode
+                }).ToList(),
+                CustomerPhones = entity.CustomerPhones?.Select(phone => new CustomerPhoneDto
+                {
+                    CountyCode = phone.CountyCode,
+                    Phone = phone.Phone
+                }).ToList()
+            };
+
+            return Ok(customerDto);
+        }
+
+        
 
         [HttpPost]
         public async Task<ActionResult<Customer>> Post([FromBody] Customer customer)
@@ -52,7 +89,7 @@ namespace Para.Api.Controllers
         {
             if (customerId != customer.Id)
             {
-                return BadRequest("There is no customer with the given Id.");
+                return BadRequest("You cannot change the id of a customer.");
             }
             
             await unitOfWork.CustomerRepository.Update(customer);

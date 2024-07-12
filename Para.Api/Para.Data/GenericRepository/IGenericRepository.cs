@@ -9,4 +9,5 @@ public interface IGenericRepository<TEntity> where TEntity : class
     Task Delete(TEntity entity);
     Task Delete(long Id);
     Task<List<TEntity>> GetAll();
+    Task<TEntity> GetDetails(long customerId);
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Para.Base.Entity;
 using Para.Data.Context;
+using Para.Data.Domain;
 
 namespace Para.Data.GenericRepository;
 
@@ -21,6 +22,20 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     public async Task<TEntity> GetById(long Id)
     {
         return await dbContext.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == Id);
+    }
+    
+    public async Task<TEntity> GetDetails(long customerId)
+    {
+        if (typeof(TEntity) == typeof(Customer))
+        {
+            return await dbContext.Set<Customer>()
+                .Include(c => c.CustomerAddresses)
+                .Include(c => c.CustomerPhones)
+                .Include(c => c.CustomerDetail)
+                .FirstOrDefaultAsync(c => c.Id == customerId) as TEntity;
+        }
+        
+        return await dbContext.Set<TEntity>().FirstOrDefaultAsync(entity => entity.Id == customerId);
     }
 
     public async Task Insert(TEntity entity)
