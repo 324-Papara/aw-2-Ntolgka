@@ -29,7 +29,7 @@ namespace Para.Api.Controllers
             var entity = await unitOfWork.CustomerRepository.GetById(customerId);
             if (entity == null)
             {
-                return NotFound();
+                return NotFound("There is no customer with the given Id.");
             }
             return Ok(entity);
         }
@@ -37,6 +37,11 @@ namespace Para.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> Post([FromBody] Customer customer)
         {
+            var entity = await unitOfWork.CustomerRepository.GetById(customer.Id);
+            if (entity != null)
+            {
+                return StatusCode(409, "There's a customer with the given Id.");
+            }
             await unitOfWork.CustomerRepository.Insert(customer);
             await unitOfWork.Complete();
             return CreatedAtAction(nameof(Get), new { customerId = customer.Id }, customer);
@@ -47,7 +52,7 @@ namespace Para.Api.Controllers
         {
             if (customerId != customer.Id)
             {
-                return BadRequest();
+                return BadRequest("There is no customer with the given Id.");
             }
             
             await unitOfWork.CustomerRepository.Update(customer);
@@ -61,7 +66,7 @@ namespace Para.Api.Controllers
             var existingCustomer = await unitOfWork.CustomerRepository.GetById(customerId);
             if (existingCustomer == null)
             {
-                return NotFound();
+                return NotFound("There is no customer with the given Id.");
             }
 
             await unitOfWork.CustomerRepository.Delete(existingCustomer);
