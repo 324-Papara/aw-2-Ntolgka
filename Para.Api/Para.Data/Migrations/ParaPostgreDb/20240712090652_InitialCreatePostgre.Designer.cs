@@ -12,7 +12,7 @@ using Para.Data.Context;
 namespace Para.Data.Migrations.ParaPostgreDb
 {
     [DbContext(typeof(ParaPostgreDbContext))]
-    [Migration("20240711184617_InitialCreatePostgre")]
+    [Migration("20240712090652_InitialCreatePostgre")]
     partial class InitialCreatePostgre
     {
         /// <inheritdoc />
@@ -272,8 +272,7 @@ namespace Para.Data.Migrations.ParaPostgreDb
                 {
                     b.Navigation("CustomerAddresses");
 
-                    b.Navigation("CustomerDetail")
-                        .IsRequired();
+                    b.Navigation("CustomerDetail");
 
                     b.Navigation("CustomerPhones");
                 });

@@ -17,40 +17,56 @@ namespace Para.Api.Controllers
 
 
         [HttpGet]
-        public async Task<List<Customer>> Get()
+        public async Task<ActionResult<List<Customer>>> Get()
         {
             var entityList = await unitOfWork.CustomerRepository.GetAll();
-            return entityList;
+            return Ok(entityList);
         }
 
         [HttpGet("{customerId}")]
-        public async Task<Customer> Get(long customerId)
+        public async Task<ActionResult<Customer>> Get(long customerId)
         {
             var entity = await unitOfWork.CustomerRepository.GetById(customerId);
-            return entity;
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
         }
 
         [HttpPost]
-        public async Task Post([FromBody] Customer value)
+        public async Task<ActionResult<Customer>> Post([FromBody] Customer customer)
         {
-            await unitOfWork.CustomerRepository.Insert(value);
-            await unitOfWork.CustomerRepository.Insert(value);
-            await unitOfWork.CustomerRepository.Insert(value);
+            await unitOfWork.CustomerRepository.Insert(customer);
             await unitOfWork.Complete();
+            return CreatedAtAction(nameof(Get), new { customerId = customer.Id }, customer);
         }
 
         [HttpPut("{customerId}")]
-        public async Task Put(long customerId, [FromBody] Customer value)
+        public async Task<IActionResult> Put(long customerId, [FromBody] Customer customer)
         {
-            await unitOfWork.CustomerRepository.Update(value);
+            if (customerId != customer.Id)
+            {
+                return BadRequest();
+            }
+            
+            await unitOfWork.CustomerRepository.Update(customer);
             await unitOfWork.Complete();
+            return NoContent();
         }
 
         [HttpDelete("{customerId}")]
-        public async Task Delete(long customerId)
+        public async Task<IActionResult> Delete(long customerId)
         {
-            await unitOfWork.CustomerRepository.Delete(customerId);
+            var existingCustomer = await unitOfWork.CustomerRepository.GetById(customerId);
+            if (existingCustomer == null)
+            {
+                return NotFound();
+            }
+
+            await unitOfWork.CustomerRepository.Delete(existingCustomer);
             await unitOfWork.Complete();
+            return NoContent();
         }
     }
 }

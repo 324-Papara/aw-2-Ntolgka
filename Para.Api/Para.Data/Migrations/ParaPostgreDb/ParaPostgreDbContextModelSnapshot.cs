@@ -269,8 +269,7 @@ namespace Para.Data.Migrations.ParaPostgreDb
                 {
                     b.Navigation("CustomerAddresses");
 
-                    b.Navigation("CustomerDetail")
-                        .IsRequired();
+                    b.Navigation("CustomerDetail");
 
                     b.Navigation("CustomerPhones");
                 });

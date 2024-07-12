@@ -8,6 +8,7 @@ using FluentValidation.AspNetCore;
 using Para.Api.Validators;
 using Para.Data.Validators;
 using Para.Base.Validators;
+using Para.Data.GenericRepository;
 
 namespace Para.Api;
 
@@ -32,6 +33,10 @@ public class Startup
         });
         services.AddFluentValidationAutoValidation();
         services.AddFluentValidationClientsideAdapters();
+
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
         services.AddValidatorsFromAssemblyContaining<BookValidator>();
         services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
         services.AddValidatorsFromAssemblyContaining<CustomerAddressValidator>();
@@ -49,8 +54,6 @@ public class Startup
         
         var connectionStringPostgre = Configuration.GetConnectionString("PostgreSqlConnection");
         services.AddDbContext<ParaPostgreDbContext>(options => options.UseNpgsql(connectionStringPostgre));
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

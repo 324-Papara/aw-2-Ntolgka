@@ -6,7 +6,7 @@ namespace Para.Data.UnitOfWork;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {
-    private readonly ParaSqlDbContext dbContext;
+    private readonly ParaPostgreDbContext dbContext;
     
     public IGenericRepository<Customer> CustomerRepository { get; }
     public IGenericRepository<CustomerDetail> CustomerDetailRepository { get; }
@@ -15,14 +15,14 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     
     
 
-    public UnitOfWork(ParaSqlDbContext dbContext)
+    public UnitOfWork(ParaPostgreDbContext dbContext)
     {
         this.dbContext = dbContext;
 
-        CustomerRepository = new GenericRepository<Customer>(this.dbContext);
-        CustomerDetailRepository = new GenericRepository<CustomerDetail>(this.dbContext);
-        CustomerAddressRepository = new GenericRepository<CustomerAddress>(this.dbContext);
-        CustomerPhoneRepository = new GenericRepository<CustomerPhone>(this.dbContext);
+        CustomerRepository = new GenericRepository<Customer>(dbContext);
+        CustomerDetailRepository = new GenericRepository<CustomerDetail>(dbContext);
+        CustomerAddressRepository = new GenericRepository<CustomerAddress>(dbContext);
+        CustomerPhoneRepository = new GenericRepository<CustomerPhone>(dbContext);
     }
 
     public void Dispose()

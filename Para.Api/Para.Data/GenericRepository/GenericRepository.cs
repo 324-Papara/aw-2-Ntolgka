@@ -6,9 +6,9 @@ namespace Para.Data.GenericRepository;
 
 public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
 {
-    private readonly ParaSqlDbContext dbContext;
+    private readonly ParaPostgreDbContext dbContext;
 
-    public GenericRepository(ParaSqlDbContext dbContext)
+    public GenericRepository(ParaPostgreDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
