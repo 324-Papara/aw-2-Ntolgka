@@ -69,7 +69,39 @@ namespace Para.Api.Controllers
             return Ok(customerDto);
         }
 
-        
+        [HttpGet("{name}/view-details")]
+        public async Task<ActionResult<List<CustomerDto>>> GetDetailedByName(string name)
+        {
+            var entity = await unitOfWork.CustomerRepository.GetDetailsByName(name);
+            if (entity == null || !entity.Any())
+            {
+                return NotFound("There is no customer with the given name.");
+            }
+
+            var customerDto = entity.Select(customer => new CustomerDto
+            {
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                IdentityNumber = customer.IdentityNumber,
+                Email = customer.Email,
+                CustomerNumber = customer.CustomerNumber,
+                DateOfBirth = customer.DateOfBirth,
+                CustomerAddresses = customer.CustomerAddresses?.Select(addr => new CustomerAddressDto
+                {
+                    Country = addr.Country,
+                    City = addr.City,
+                    AddressLine = addr.AddressLine,
+                    ZipCode = addr.ZipCode
+                }).ToList(),
+                CustomerPhones = customer.CustomerPhones?.Select(phone => new CustomerPhoneDto
+                {
+                    CountyCode = phone.CountyCode,
+                    Phone = phone.Phone
+                }).ToList()
+            }).ToList();
+
+            return Ok(customerDto);
+        }
 
         [HttpPost]
         public async Task<ActionResult<Customer>> Post([FromBody] Customer customer)

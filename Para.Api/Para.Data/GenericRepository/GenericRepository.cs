@@ -31,11 +31,25 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             return await dbContext.Set<Customer>()
                 .Include(c => c.CustomerAddresses)
                 .Include(c => c.CustomerPhones)
-                .Include(c => c.CustomerDetail)
                 .FirstOrDefaultAsync(c => c.Id == customerId) as TEntity;
         }
         
         return await dbContext.Set<TEntity>().FirstOrDefaultAsync(entity => entity.Id == customerId);
+    }
+    
+    public async Task<List<TEntity>> GetDetailsByName(string name)
+    {
+        if (typeof(TEntity) == typeof(Customer))
+        {
+            var customers = await dbContext.Set<Customer>()
+                .Include(c => c.CustomerAddresses)
+                .Include(c => c.CustomerPhones)
+                .Where(c => c.FirstName == name).ToListAsync();
+
+            return customers.Cast<TEntity>().ToList();
+        }
+        
+        return new List<TEntity>();
     }
 
     public async Task Insert(TEntity entity)
